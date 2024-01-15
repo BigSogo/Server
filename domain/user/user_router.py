@@ -2,6 +2,6 @@ from fastapi import APIRouter
 
 router = APIRouter()
 
-@router.get("/register")
+@router.post("/")
 async def hello():
     return "hello"

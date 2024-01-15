@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
-from register import register_router;
+from domain.user import user_router;
 
 application = FastAPI()
 
-application.include_router(register_router.router)  
+application.include_router(user_router.router)  

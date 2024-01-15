@@ -1,9 +1,11 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, MetaData
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
 
 from dotenv import load_dotenv
 import os
+
+load_dotenv()
 
 user_name = os.getenv('USER_NAME')
 user_pwd = os.getenv("USER_PWD")
@@ -33,3 +35,5 @@ session = scoped_session(
 
 Base = declarative_base()
 Base.query = session.query_property()
+
+metadata = MetaData()

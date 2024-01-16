@@ -12,7 +12,7 @@ user_pwd = os.getenv("USER_PWD")
 db_host = os.getenv("DB_HOST")
 db_name = os.getenv("DB_NAME")
 
-DATABASE =  'mysql://%s:%s@%s/%s?charset=utf8' % (
+DATABASE =  'mariadb+pymysql://%s:%s@%s/%s?charset=utf8' % (
     user_name,
     user_pwd,
     db_host,
@@ -21,7 +21,6 @@ DATABASE =  'mysql://%s:%s@%s/%s?charset=utf8' % (
 
 ENGINE = create_engine(
     DATABASE,
-    encoding="utf-8",
     echo=True
 )
 

@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, TEXT
+from sqlalchemy.orm import relationship
 from globals.db import Base
 
 class User(Base):
@@ -9,3 +10,5 @@ class User(Base):
     password = Column(String(100))
     description = Column(TEXT)
     major = Column(String(50))
+
+    questions = relationship("Question", back_populates="user")

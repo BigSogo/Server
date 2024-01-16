@@ -4,9 +4,14 @@ import jwt
 import time
 import bcrypt
 from dotenv import load_dotenv
+from fastapi import Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 # 환경변수 불러오기
 load_dotenv()
+
+# Bearer 가져오는 인스턴스
+security = HTTPBearer()
 
 # JWT Secret Key
 JWT_SECRET_KEY =  os.getenv("JWT_SECRET_KEY")
@@ -27,7 +32,7 @@ def generate_token(dto: Login) :
                 'email' : user.email
             }
 
-            return jwt.encode(
+            return "Bearer " + jwt.encode(
                 payload,
                 JWT_SECRET_KEY,
                 algorithm='HS256'
@@ -36,6 +41,13 @@ def generate_token(dto: Login) :
             return "발급 실패 (1)"
     except :
         return "발급 실패 (2)"
+
+# 사용자 가져오기
+def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    if credentials:
+        token = credentials.credentials
+        info = verify_token(token)
+        return {"user": info}
 
 # 토큰 검증
 def verify_token(token) :

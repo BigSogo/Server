@@ -14,5 +14,5 @@ class Question(Base):
     content = Column(Text)
     date = Column(TIMESTAMP, default=datetime.datetime.utcnow)
     
-    user_id = Column(Integer, ForeignKey("user.id"))
+    user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE", onupdate="CASCADE"))
     user = relationship("User", back_populates="questions")

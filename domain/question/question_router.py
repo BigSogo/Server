@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
-from domain.question.question_dto import CreateQuestionRequest
+from domain.question.question_dto import CreateQuestion
 from sqlalchemy.orm import Session
 from globals.db import session
 from domain.question.question_table import Question
@@ -17,7 +17,7 @@ def get_db():
         session.close()
 
 @router.post("/question", response_model=BaseResponse[None])
-async def create_question(request: CreateQuestionRequest, db: Session = Depends(get_db)) -> BaseResponse[None]:
+async def create_question(request: CreateQuestion, db: Session = Depends(get_db)) -> BaseResponse[None]:
     question = Question(
         title = request.title,
         content = request.content,

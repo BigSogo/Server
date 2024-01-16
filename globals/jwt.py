@@ -29,7 +29,7 @@ def generate_token(dto: Login) :
         if user and bcrypt.checkpw(dto.password.encode('utf-8'), user.password.encode('utf-8')):
             payload = {
                 'expire' : int(time.time()) + (5 * 7 * 24 * 60 * 60),
-                'email' : user.id
+                'id' : user.id
             }
 
             return "Bearer " + jwt.encode(

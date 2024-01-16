@@ -1,1 +1,1 @@
-pip install uvicorn gunicorn sqlalchemy fastapi pydantic
+pip install uvicorn gunicorn sqlalchemy fastapi pydantic bcrypt PyJWT

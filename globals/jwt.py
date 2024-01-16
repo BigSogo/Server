@@ -29,7 +29,7 @@ def generate_token(dto: Login) :
         if user and bcrypt.checkpw(dto.password.encode('utf-8'), user.password.encode('utf-8')):
             payload = {
                 'expire' : int(time.time()) + (5 * 7 * 24 * 60 * 60),
-                'email' : user.email
+                'email' : user.id
             }
 
             return "Bearer " + jwt.encode(
@@ -48,7 +48,7 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
         token = credentials.credentials
         info = verify_token(token)
         return {"user": info}
-
+    
 # 토큰 검증
 def verify_token(token) :
     try :

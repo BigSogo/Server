@@ -1,5 +1,5 @@
 # 기본 모듈
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from dotenv import load_dotenv
 
 # .env 불러오기
@@ -23,6 +23,11 @@ router = APIRouter()
 async def login(dto: Login) :
     return jwtUtil.generate_token(dto)
 
+# 테스트 라우터
+@router.get("/test")
+async def test(current_user: dict = Depends(jwtUtil.get_current_user)) :
+    return current_user
+
 # 회원가입
 @router.post("/register")
 async def register(dto: Register):
@@ -37,3 +42,6 @@ async def register(dto: Register):
     session.commit()
 
     return f"{dto.username} created..."
+
+@router.get("/user/{major}")
+async def searchUser(major: str) :

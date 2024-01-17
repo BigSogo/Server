@@ -11,4 +11,6 @@ class User(Base):
     description = Column(TEXT)
     major = Column(String(50))
 
-    questions = relationship("Question", back_populates="user")
+    questions_writer = relationship("Question", back_populates="writer", foreign_keys="[Question.writer_id]")
+    questions_senior = relationship("Question", back_populates="senior", foreign_keys="[Question.senior_id]")
+    comments = relationship("Comment", back_populates="writer")

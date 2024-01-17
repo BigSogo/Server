@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, Text, TIMESTAMP, ForeignKey
 from sqlalchemy.orm import relationship
 import datetime
 from globals.db import Base
+from domain.question.comment_table import Comment
 
 
 class Question(Base):
@@ -14,5 +15,9 @@ class Question(Base):
     content = Column(Text)
     date = Column(TIMESTAMP, default=datetime.datetime.utcnow)
     
-    user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE", onupdate="CASCADE"))
-    user = relationship("User", back_populates="questions")
+    writer_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE", onupdate="CASCADE"))
+    senior_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE", onupdate="CASCADE"), nullable=True)
+
+    writer = relationship("User", back_populates="questions_writer", foreign_keys=[writer_id])
+    senior = relationship("User", back_populates="questions_senior", foreign_keys=[senior_id])
+    comments  = relationship("Comment", back_populates="question")

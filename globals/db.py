@@ -32,6 +32,12 @@ session = scoped_session(
     )
 )
 
+def get_db():
+    try:
+        yield session
+    finally:
+        session.close()
+
 Base = declarative_base()
 Base.query = session.query_property()
 

@@ -4,7 +4,7 @@ import jwt
 import time
 import bcrypt
 from dotenv import load_dotenv
-from fastapi import Depends
+from fastapi import Depends, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 # 환경변수 불러오기
@@ -17,36 +17,35 @@ security = HTTPBearer()
 JWT_SECRET_KEY =  os.getenv("JWT_SECRET_KEY")
 
 # 기타 모듈
-from globals.db import session
+from globals.db import get_db
 from domain.user.user_dto import Login
 from domain.user.user_table import User
+from sqlalchemy.orm import Session
 
 # JWT 발급
-def generate_token(dto: Login) :
-    try :
-        user = session.query(User).filter(User.email == dto.email).first()
+def generate_token(dto: Login, db: Session) :
+    user = db.query(User).filter(User.email == dto.email).one_or_none()
 
-        if user and bcrypt.checkpw(dto.password.encode('utf-8'), user.password.encode('utf-8')):
-            payload = {
-                'expire' : int(time.time()) + (5 * 7 * 24 * 60 * 60),
-                'email' : user.email
-            }
+    if user != None and bcrypt.checkpw(dto.password.encode('utf-8'), user.password.encode('utf-8')):
+        payload = {
+            'expire' : int(time.time()) + (5 * 7 * 24 * 60 * 60),
+            'id' : user.id
+        }
 
-            return "Bearer " + jwt.encode(
-                payload,
-                JWT_SECRET_KEY,
-                algorithm='HS256'
-            )
-        else :
-            return "발급 실패 (1)"
-    except :
-        return "발급 실패 (2)"
+        return "Bearer " + jwt.encode(
+            payload,
+            JWT_SECRET_KEY,
+            algorithm='HS256'
+        )
+    else :
+        return HTTPException(400, "잘못된 정보")
 
 # 사용자 가져오기
 def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
     if credentials:
         token = credentials.credentials
-        info = verify_token(token)
+        info = verify_token(token[7:])
+        print(info)
         return {"user": info}
 
 # 토큰 검증
@@ -54,4 +53,4 @@ def verify_token(token) :
     try :
         return jwt.decode(token, JWT_SECRET_KEY, algorithms=["HS256"])
     except :
-        return "검증 실패"
+        raise HTTPException(403, "권한없음")

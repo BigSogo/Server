@@ -9,3 +9,11 @@ class Register(BaseModel) :
 class Login(BaseModel) :
     email : str
     password : str
+
+class UserDto(BaseModel):
+    id: int
+    email: str
+    username: str
+    password: str
+    description: str
+    major: str

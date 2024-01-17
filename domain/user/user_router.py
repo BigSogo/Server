@@ -1,6 +1,7 @@
 # 기본 모듈
 from fastapi import APIRouter, Depends
 from dotenv import load_dotenv
+from typing import Optional
 
 # .env 불러오기
 load_dotenv()
@@ -14,12 +15,13 @@ import globals.jwt as jwtUtil
 from globals.db import session
 from domain.user.user_dto import Login, Register
 from domain.user.user_table import User
+from globals.base_response import BaseResponse
 
 # 라우터 설정
 router = APIRouter()
 
 # 로그인
-@router.post("/login")
+@router.post("/login", response_model=BaseResponse)
 async def login(dto: Login) :
     return jwtUtil.generate_token(dto)
 
@@ -43,5 +45,6 @@ async def register(dto: Register):
 
     return f"{dto.username} created..."
 
-@router.get("/user/{major}")
-async def searchUser(major: str) :
+@router.get("/user")
+async def search_user(query: Optional[str] = None) :
+    return session.query(User).filter(User.major.like(f"%{query}%")).all()

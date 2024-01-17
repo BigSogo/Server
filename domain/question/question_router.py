@@ -6,7 +6,7 @@ from globals.db import session
 from domain.question.question_table import Question
 from globals.base_response import BaseResponse
 from http import HTTPStatus
-from typing import Union
+from typing import Optional, Union
 
 router = APIRouter()
 

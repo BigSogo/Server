@@ -20,6 +20,7 @@ JWT_SECRET_KEY =  os.getenv("JWT_SECRET_KEY")
 from globals.db import session
 from domain.user.user_dto import Login
 from domain.user.user_table import User
+from globals.base_response import BaseResponse
 
 # JWT 발급
 def generate_token(dto: Login) :
@@ -32,10 +33,14 @@ def generate_token(dto: Login) :
                 'id' : user.id
             }
 
-            return "Bearer " + jwt.encode(
-                payload,
-                JWT_SECRET_KEY,
-                algorithm='HS256'
+            return BaseResponse(
+                    code = 200,
+                    message = "발급 성공",
+                    data = "Bearer " + jwt.encode(
+                    payload,
+                    JWT_SECRET_KEY,
+                    algorithm='HS256'
+                )
             )
         else :
             return "발급 실패 (1)"

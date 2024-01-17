@@ -28,6 +28,10 @@ async def create_question(request: CreateQuestionRequest, db: Session = Depends(
 
     return BaseResponse(code=HTTPStatus.OK, message="생성완료")
 
-@router.get("/question")
+@router.get("/question", response_model=BaseResponse)
 async def search_question(query: Optional[str] = None) :
-    return session.query(Question).filter(Question.title.like(f"%{query}%")).all()
+    return BaseResponse(
+        code = 200,
+        message = "검색 성공",
+        data = session.query(Question).filter(Question.title.like(f"%{query}%")).all()
+    )

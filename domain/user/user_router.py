@@ -45,6 +45,10 @@ async def register(dto: Register):
 
     return f"{dto.username} created..."
 
-@router.get("/user")
+@router.get("/user", response_model=BaseResponse)
 async def search_user(query: Optional[str] = None) :
-    return session.query(User).filter(User.major.like(f"%{query}%")).all()
+    return BaseResponse(
+        code = 200,
+        message = "검색 성공",
+        data = session.query(User).filter(User.major.like(f"%{query}%")).all()
+    )

@@ -39,7 +39,7 @@ def generate_token(dto: Login, db: Session) :
             algorithm='HS256'
         )
     else :
-        return HTTPException(400, "잘못된 정보")
+        raise HTTPException(400, "잘못된 정보")
 
 # 사용자 가져오기
 def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):

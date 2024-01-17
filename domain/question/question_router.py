@@ -27,3 +27,7 @@ async def create_question(request: CreateQuestionRequest, db: Session = Depends(
     db.commit()
 
     return BaseResponse(code=HTTPStatus.OK, message="생성완료")
+
+@router.get("/question")
+async def search_question(query: Optional[str] = None) :
+    return session.query(Question).filter(Question.title.like(f"%{query}%")).all()

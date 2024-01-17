@@ -24,7 +24,7 @@ from globals.base_response import BaseResponse
 router = APIRouter()
 
 # 로그인
-@router.post("/login", response_model=BaseResponse)
+@router.post("/login", response_model=BaseResponse[str])
 async def login(dto: Login, db: Session = Depends(get_db)) :
     return BaseResponse(code=200, message="발급 완료", data = jwtUtil.generate_token(dto, db))
 
@@ -34,7 +34,7 @@ async def test(current_user: dict = Depends(jwtUtil.get_current_user)) :
     return current_user
 
 # 회원가입
-@router.post("/register")
+@router.post("", response_model=BaseResponse[None])
 async def register(dto: Register, db: Session = Depends(get_db)):
     user = User(
         email = dto.email,
@@ -48,7 +48,7 @@ async def register(dto: Register, db: Session = Depends(get_db)):
 
     return BaseResponse(code=200, message=f"{dto.username} created...")
 
-@router.get("/user", response_model=BaseResponse)
+@router.get("", response_model=list[UserResponse])
 async def search_user(query: Optional[str] = None, db: Session = Depends(get_db)) :
     users = db.query(User).filter(User.major.like(f"%{query}%")).all()
     user_data = [UserResponse(**user.__dict__) for user in users]

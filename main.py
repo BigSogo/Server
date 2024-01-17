@@ -11,5 +11,5 @@ Base.metadata.create_all(bind=ENGINE)
 
 app = FastAPI()
 
-app.include_router(question_router.router)
-app.include_router(user_router.router)
+app.include_router(question_router.router, prefix="/question", tags=["question"])
+app.include_router(user_router.router, prefix="/user", tags=["user"])

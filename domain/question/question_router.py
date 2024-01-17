@@ -37,8 +37,8 @@ async def create_question(request: CreateQuestion, db: Session = Depends(get_db)
     return BaseResponse(code=HTTPStatus.OK, message="생성완료")
 
 @router.get("/question", response_model=BaseResponse[GetQuestion])
-async def get_question(question_id:int, db: Session = Depends(get_db)):
-    question = db.query(Question).get(question_id)
+async def get_question(id:int, db: Session = Depends(get_db)):
+    question = db.query(Question).get(id)
     if question == None:
         raise HTTPException(404, "데이터를 찾을 수 없습니다.")
     else:

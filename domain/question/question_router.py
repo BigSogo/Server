@@ -91,6 +91,33 @@ async def search_question(keyword: str, db: Session = Depends(get_db)):
 
     return BaseResponse(code=200, message="조회 성공", data=question_list)
 
+@router.put("/{question_id}", response_model=BaseResponse[None])
+async def update_question(question_id: int, request: CreateQuestion, db: Session = Depends(get_db), user_data: User = Depends(get_current_user)):
+    question = db.query(Question).get(question_id)
+    if question is None:
+        raise HTTPException(404, "데이터를 찾을 수 없습니다.")
+    if question.writer_id == user_data.id:
+        raise HTTPException(403, "권한이 없습니다")
+
+    question.title = request.title
+    question.content = request.content
+    question.senior_id = request.senior_id
+
+    db.commit()
+    return BaseResponse(code=HTTPStatus.OK, message="수정 완료")
+
+@router.delete("/{question_id}", response_model=BaseResponse[None])
+async def delete_question(question_id: int, db: Session = Depends(get_db), user_data: User = Depends(get_current_user)):
+    question = db.query(Question).get(question_id)
+    if question is None:
+        raise HTTPException(404, "데이터를 찾을 수 없습니다.")
+    if question.writer == user_data.id:
+        raise HTTPException(403, "권한이 없습니다")
+
+    db.delete(question)
+    db.commit()
+    return BaseResponse(code=HTTPStatus.OK, message="삭제 완료")
+
 def __create_user_response(user: User):
     return UserResponse(
         id=user.id,

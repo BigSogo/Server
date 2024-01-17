@@ -42,11 +42,13 @@ def generate_token(dto: Login, db: Session) :
         raise HTTPException(400, "잘못된 정보")
 
 # 사용자 가져오기
-def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security), db: Session = Depends[get_db]):
+def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security), db: Session = Depends(get_db)):
     if credentials:
         token = credentials.credentials
-        info = verify_token(token)
-        return db.query(User).get(info.id)
+        info = verify_token(token[7:])
+        return db.query(User).get(info['id'])
+    else:
+        HTTPException(403, "권한없음")
     
 # 토큰 검증
 def verify_token(token) :

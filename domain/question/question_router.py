@@ -16,8 +16,8 @@ from globals.jwt import get_current_user
 router = APIRouter()
 
 @router.post("/question", response_model=BaseResponse[None])
-async def create_question(request: CreateQuestion, db: Session = Depends(get_db), user_data: dict = Depends(get_current_user)) -> BaseResponse[None]:
-    writer = user_data['id']
+async def create_question(request: CreateQuestion, db: Session = Depends(get_db), user_data: User = Depends(get_current_user)) -> BaseResponse[None]:
+    writer = user_data.id
     if request.senior_id != None:
         question = Question(
             title = request.title,

@@ -10,10 +10,17 @@ class CreateQuestion(BaseModel):
     senior_id: Optional[int] = None
 
 class GetQuestion(BaseModel):
-    id: int = None
-    title: str = None
-    content: str = None
-    date: datetime = None
-    writer: UserResponse = None
+    id: int
+    title: str
+    content: str
+    date: datetime
+    writer: UserResponse
     senior: Optional[UserResponse] = None
     comments: list[Optional[CommentDto]] = None
+
+class GetQuestionList(BaseModel):
+    id: int
+    title: str
+    date: datetime
+    writer: UserResponse
+    senior: Optional[UserResponse] = None

@@ -21,6 +21,7 @@ from globals.db import get_db
 from domain.user.user_dto import Login
 from domain.user.user_table import User
 from sqlalchemy.orm import Session
+from globals.base_response import BaseResponse
 
 # JWT 발급
 def generate_token(dto: Login, db: Session) :
@@ -47,7 +48,7 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
         info = verify_token(token[7:])
         print(info)
         return {"user": info}
-
+    
 # 토큰 검증
 def verify_token(token) :
     try :

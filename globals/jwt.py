@@ -46,8 +46,7 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
     if credentials:
         token = credentials.credentials
         info = verify_token(token[7:])
-        print(info)
-        return {"user": info}
+        return info
     
 # 토큰 검증
 def verify_token(token) :

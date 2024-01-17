@@ -40,7 +40,7 @@ async def register(dto: Register, db: Session = Depends(get_db)):
         email = dto.email,
         username = dto.username,
         password = bcrypt_context.hash(dto.password),
-        major = dto.major
+        major = '|'.join(dto.major)
     )
 
     db.add(user)

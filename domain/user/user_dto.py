@@ -5,22 +5,15 @@ class Register(BaseModel) :
     email : str
     username : str
     password : str
-    major : str
+    major : list[str]
 
 class Login(BaseModel) :
     email : str
     password : str
 
-class UserDto(BaseModel):
-    id: int
-    email: str
-    username: str
-    password: str
-    description: str
-    major: str
-
 class UserResponse(BaseModel) :
     id : int
+    email: str
     username : str
-    description : Optional[str]
-    major : str
+    description : Optional[str] = None
+    major: list[str]

@@ -6,7 +6,6 @@ from domain.question import question_router
 import logging
 
 logging.basicConfig()
-logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
 Base.metadata.create_all(bind=ENGINE)
 

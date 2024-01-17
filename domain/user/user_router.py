@@ -13,7 +13,7 @@ bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated="auto")
 # 관련 모듈
 import globals.jwt as jwtUtil
 from globals.db import session
-from domain.user.user_dto import Login, Register
+from domain.user.user_dto import Login, Register, UserResponse
 from domain.user.user_table import User
 from globals.base_response import BaseResponse
 
@@ -47,8 +47,12 @@ async def register(dto: Register):
 
 @router.get("/user", response_model=BaseResponse)
 async def search_user(query: Optional[str] = None) :
+    users = session.query(User).filter(User.major.like(f"%{query}%")).all()
+    user_data = [UserResponse(**user.__dict__) for user in users]
+
     return BaseResponse(
         code = 200,
         message = "검색 성공",
-        data = session.query(User).filter(User.major.like(f"%{query}%")).all()
+        data = user_data
     )
+    

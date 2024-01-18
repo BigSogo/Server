@@ -21,6 +21,7 @@ class GetQuestion(BaseModel):
 class GetQuestionList(BaseModel):
     id: int
     title: str
+    content: str
     date: datetime
     writer: UserResponse
     senior: Optional[UserResponse] = None

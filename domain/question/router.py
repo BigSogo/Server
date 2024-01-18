@@ -68,6 +68,7 @@ async def get_question_list(db: Session = Depends(get_db)):
     question_list = [GetQuestionList(
         id=question.id,
         title=question.title,
+        content=question.content,
         date=question.date,
         writer=create_user_response(question.writer),
         senior=None if question.senior == None else create_user_response(question.senior)

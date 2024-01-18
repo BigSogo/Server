@@ -8,8 +8,6 @@ class User(Base):
     email = Column(String(50))
     username = Column(String(10))
     password = Column(String(100))
-    description = Column(TEXT)
-    major = Column(String(50))
 
     questions_writer = relationship("Question", back_populates="writer", foreign_keys="[Question.writer_id]")
     questions_senior = relationship("Question", back_populates="senior", foreign_keys="[Question.senior_id]")

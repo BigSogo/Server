@@ -15,6 +15,7 @@ class Login(BaseModel) :
 
 class UserResponse(BaseModel) :
     id : int
+    profile_img: Optional[str] = None
     email: str
     username : str
     description: Optional[str] = None
@@ -31,6 +32,7 @@ class EmailAuthentication(BaseModel):
 def create_user_response(user: User):
     return UserResponse(
         id=user.id,
+        profile_img=user.profile_img,
         email=user.email,
         username=user.username,
         description=user.description,

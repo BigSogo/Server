@@ -11,3 +11,7 @@ class CommentDto(BaseModel):
 class CreateComment(BaseModel):
     content: str
     question_id: int
+    
+class UpdateComment(BaseModel):
+    comment_id: int
+    content: str

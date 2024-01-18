@@ -17,7 +17,8 @@ REDIS_HOST: str = os.getenv("REDIS_HOST")
 REDIS_PORT: int = os.getenv("REDIS_PORT")
 REDIS_DATABASE: int = os.getenv("REDIS_DATABASE")
 
-rd = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DATABASE)
+pool = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DATABASE, decode_responses=True)
+
 
 DATABASE =  'mariadb+pymysql://%s:%s@%s/%s?charset=utf8' % (
     user_name,
@@ -46,10 +47,7 @@ def get_db():
         session.close()
 
 def get_redis():
-    try:
-        yield rd
-    except:
-        rd.close()
+    return pool
 
 Base = declarative_base()
 Base.query = session.query_property()

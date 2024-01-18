@@ -75,7 +75,7 @@ async def email_send(email: EmailSend, db: Session = Depends(get_db), redis: Red
         raise HTTPException(400, "이메일 중복")
     
     random_code = ''.join(random.sample(num_list, 6))
-    redis.set(email.email, random_code)
+    redis.setex(email.email, 5, random_code)
 
     sender_email = os.getenv("EMAIL")
     sender_password = os.getenv("PASSWORD")
@@ -95,11 +95,14 @@ async def email_send(email: EmailSend, db: Session = Depends(get_db), redis: Red
 
     return BaseResponse(code=200, message="이메일 전송 성공")
 
-@router.post("/email/authentication", response_model=BaseResponse[bool])
+@router.post("/email/auth", response_model=BaseResponse[bool])
 async def email_authentication(email: EmailAuthentication, redis: Redis = Depends(get_redis)):
+    
     code = redis.get(email.email)
+    print(code)
 
     if code == email.code:
+        redis.delete(email.email)
         return BaseResponse(code=200, message="성공", data=True)
     else:
-        return HTTPException(401, "인증 코드가 다릅니다.")
+        return BaseResponse(code=200, message="실패", data=False)

@@ -44,4 +44,4 @@ if __name__ == "__main__":
         "forwarded_allow_ips": "*"
     }
 
-    uvicorn.run("main:app", **uvicorn_kwargs)
+    uvicorn.run("main:app", **uvicorn_kwargs, log_level="debug")

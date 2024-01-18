@@ -95,7 +95,7 @@ async def email_send(email: EmailSend, db: Session = Depends(get_db), redis: Red
 
     return BaseResponse(code=200, message="이메일 전송 성공")
 
-@router.post("/email/authentication", BaseResponse[bool])
+@router.post("/email/authentication", response_model=BaseResponse[bool])
 async def email_authentication(email: EmailAuthentication, redis: Redis = Depends(get_redis)):
     code = redis.get(email.email)
 

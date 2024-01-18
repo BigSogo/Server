@@ -1,7 +1,7 @@
 # 기본 모듈
 from fastapi import APIRouter, UploadFile, File, Depends
 from sqlalchemy.orm import Session
-import io
+from typing import List
 
 # 관련 모듈
 from globals.jwt import get_db
@@ -10,7 +10,7 @@ from globals.base_response import BaseResponse
 
 router = APIRouter()
 
-@router.get("")
+@router.get("", response_model=List[Event])
 async def get_event(db: Session = Depends(get_db)) :
     return db.query(Event).all()
 

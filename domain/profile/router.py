@@ -8,7 +8,6 @@ from globals.db import get_db
 from domain.profile.table import Profile
 from globals.base_response import BaseResponse
 from domain.profile.dto import ProfileResponse
-from domain.user.table import
 from domain.user.dto import create_user_response
 
 router = APIRouter()

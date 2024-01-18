@@ -22,6 +22,12 @@ class UserResponse(BaseModel) :
     major: list[str]
     profile: ProfileResponse
 
+class EmailSend(BaseModel):
+    email: str
+
+class EmailAuthentication(BaseModel):
+    email: str
+    code: str
 
 def create_user_response(user: User):
     return UserResponse(
@@ -33,3 +39,4 @@ def create_user_response(user: User):
         major=user.major.split('|'),
         profile=create_profile_response(user.profile)
     )
+    

@@ -6,7 +6,7 @@ from domain.question.table import Question
 from domain.user.table import User
 from domain.question.dto import CreateQuestion, GetQuestion, GetQuestionList
 from domain.comment.dto import CommentDto
-from domain.user.dto import UserResponse
+from domain.user.dto import create_user_response
 
 from globals.base_response import BaseResponse
 from globals.db import get_db
@@ -39,7 +39,7 @@ async def get_question(id:int, db: Session = Depends(get_db)):
     if question == None:
         raise HTTPException(404, "데이터를 찾을 수 없습니다.")
     
-    writer = __create_user_response(question.writer)
+    writer = create_user_response(question.writer)
 
     senior = None if question.senior == None else __create_user_response(question.senior)
 
@@ -131,15 +131,6 @@ async def delete_question(question_id: int, db: Session = Depends(get_db), user_
     db.delete(question)
     db.commit()
     return BaseResponse(code=HTTPStatus.OK, message="삭제 완료")
-
-def __create_user_response(user: User):
-    return UserResponse(
-        id=user.id,
-        email=user.email,
-        username=user.username,
-        description=user.description,
-        major=user.major.split('|')
-    )
 
 def __filter_similar_questions(questions: list[Question], search_query, similarity_threshold) -> list[Question]:
     contents = [f"{question.title} {question.content}" for question in questions]

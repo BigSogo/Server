@@ -11,7 +11,7 @@ class Profile(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship("User", back_populates="profile", uselist=False)
+    major = Column(String(100))
     subject = Column(String(100))
     content = Column(Text)
-    major = Column(String(100))
     portfolio_url = Column(String(100))

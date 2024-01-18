@@ -18,8 +18,8 @@ JWT_SECRET_KEY =  os.getenv("JWT_SECRET_KEY")
 
 # 기타 모듈
 from globals.db import get_db
-from domain.user.user_dto import Login
-from domain.user.user_table import User
+from domain.user.dto import Login
+from domain.user.table import User
 from sqlalchemy.orm import Session
 from globals.base_response import BaseResponse
 

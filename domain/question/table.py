@@ -1,8 +1,8 @@
 from sqlalchemy import Column, Integer, String, Text, TIMESTAMP, ForeignKey
 from sqlalchemy.orm import relationship
 
-from domain.user.user_table import User
-from domain.comment.comment_table import Comment
+from domain.user.table import User
+from domain.comment.table import Comment
 
 import datetime
 from globals.db import Base

@@ -15,8 +15,8 @@ bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated="auto")
 # 관련 모듈
 import globals.jwt as jwtUtil
 from globals.db import get_db
-from domain.user.user_dto import Login, Register
-from domain.user.user_table import User
+from domain.user.dto import Login, Register
+from domain.user.table import User
 from globals.base_response import BaseResponse
 
 # 라우터 설정

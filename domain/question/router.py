@@ -2,11 +2,11 @@ from fastapi import APIRouter, Depends, HTTPException
 from http import HTTPStatus
 from sqlalchemy.orm import Session
 
-from domain.question.question_table import Question
-from domain.user.user_table import User
-from domain.question.question_dto import CreateQuestion, GetQuestion, GetQuestionList
-from domain.comment.comment_dto import CommentDto
-from domain.user.user_dto import UserResponse
+from domain.question.table import Question
+from domain.user.table import User
+from domain.question.dto import CreateQuestion, GetQuestion, GetQuestionList
+from domain.comment.dto import CommentDto
+from domain.user.dto import UserResponse
 
 from globals.base_response import BaseResponse
 from globals.db import get_db

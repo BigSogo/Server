@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
-from domain.user.user_dto import UserResponse
-from domain.comment.comment_dto import CommentDto
+from domain.user.dto import UserResponse
+from domain.comment.dto import CommentDto
 from typing import Optional
 
 class CreateQuestion(BaseModel):

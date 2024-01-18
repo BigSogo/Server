@@ -1,10 +1,15 @@
 # 기본 모듈
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from dotenv import load_dotenv
-from globals.base_response import BaseResponse
 from sqlalchemy.orm import Session
 from fastapi import Depends
 from typing import Optional
+from smtplib import SMTP
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import random
+import os
+from redis import Redis
 
 # .env 불러오기
 load_dotenv()
@@ -15,13 +20,14 @@ bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated="auto")
 
 # 관련 모듈
 import globals.jwt as jwtUtil
-from globals.db import get_db
-from domain.user.dto import Login, Register, create_user_response
+from globals.db import get_db, get_redis
+from domain.user.dto import Login, Register, EmailAuthentication, EmailSend, create_user_response
 from domain.user.table import User
 from globals.base_response import BaseResponse
 
 # 라우터 설정
 router = APIRouter()
+num_list = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
 # 로그인
 @router.post("/login", response_model=BaseResponse[str])
@@ -61,3 +67,39 @@ async def search_user(query: Optional[str] = None, db: Session = Depends(get_db)
         message = "유저 검색 성공",
         data = datas
     )
+
+@router.post("/email/send", response_model=BaseResponse)
+async def email_send(email: EmailSend, db: Session = Depends(get_db), redis: Redis = Depends(get_redis)):
+    user: User = db.query(User).filter(User.email == email.email).one_or_none()
+    if user is not None:
+        raise HTTPException(400, "이메일 중복")
+    
+    random_code = ''.join(random.sample(num_list, 6))
+    redis.set(email.email, random_code)
+
+    sender_email = os.getenv("EMAIL")
+    sender_password = os.getenv("PASSWORD")
+
+    email_server = SMTP("smtp.gmail.com", 587)
+    email_server.starttls()
+    email_server.login(sender_email, sender_password)
+
+    msg = MIMEMultipart()
+    msg["FROM"] = sender_email
+    msg["To"] = email.email
+    msg["Subject"] = "sogo 이메일 인증"
+    msg.attach(MIMEText(random_code))
+
+    email_server.send_message(msg)
+    email_server.quit()
+
+    return BaseResponse(code=200, message="이메일 전송 성공")
+
+@router.post("/email/authentication", BaseResponse[bool])
+async def email_authentication(email: EmailAuthentication, redis: Redis = Depends(get_redis)):
+    code = redis.get(email.email)
+
+    if code == email.code:
+        return BaseResponse(code=200, message="성공", data=True)
+    else:
+        return HTTPException(401, "인증 코드가 다릅니다.")

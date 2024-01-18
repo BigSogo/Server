@@ -3,6 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
 
 from dotenv import load_dotenv
+import redis
 import os
 
 load_dotenv()
@@ -11,6 +12,12 @@ user_name = os.getenv('USER_NAME')
 user_pwd = os.getenv("USER_PWD")
 db_host = os.getenv("DB_HOST")
 db_name = os.getenv("DB_NAME")
+
+REDIS_HOST: str = os.getenv("REDIS_HOST")
+REDIS_PORT: int = os.getenv("REDIS_PORT")
+REDIS_DATABASE: int = os.getenv("REDIS_DATABASE")
+
+rd = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DATABASE)
 
 DATABASE =  'mariadb+pymysql://%s:%s@%s/%s?charset=utf8' % (
     user_name,
@@ -37,6 +44,12 @@ def get_db():
         yield session
     finally:
         session.close()
+
+def get_redis():
+    try:
+        yield rd
+    except:
+        rd.close()
 
 Base = declarative_base()
 Base.query = session.query_property()

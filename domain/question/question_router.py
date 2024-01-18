@@ -75,6 +75,20 @@ async def get_question_list(db: Session = Depends(get_db)):
 
     return BaseResponse(code=200, message="조회 완료", data=question_list)
 
+@router.get("/my", response_model=BaseResponse[list[GetQuestionList]])
+async def get_my_question(db: Session = Depends(get_db), user_data: User = Depends(get_current_user)):
+    questions = db.query(Question).filter(Question.writer_id == user_data.id).all()
+
+    question_list = [GetQuestionList(
+        id=question.id,
+        title=question.title,
+        date=question.date,
+        writer=__create_user_response(question.writer),
+        senior=None if question.senior == None else __create_user_response(question.senior)
+    ) for question in questions]
+
+    return BaseResponse(code=200, message="조회 성공", data=question_list)
+
 @router.get("/search", response_model=BaseResponse[list[GetQuestionList]])
 async def search_question(keyword: str, db: Session = Depends(get_db)):
     questions = db.query(Question).order_by(Question.id.desc()).all()

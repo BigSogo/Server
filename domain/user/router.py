@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from globals.base_response import BaseResponse
 from sqlalchemy.orm import Session
 from fastapi import Depends
+from typing import Optional
 
 # .env 불러오기
 load_dotenv()
@@ -15,7 +16,7 @@ bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated="auto")
 # 관련 모듈
 import globals.jwt as jwtUtil
 from globals.db import get_db
-from domain.user.dto import Login, Register
+from domain.user.dto import Login, Register, create_user_response
 from domain.user.table import User
 from globals.base_response import BaseResponse
 
@@ -45,3 +46,17 @@ async def register(dto: Register, db: Session = Depends(get_db)):
     db.commit()
 
     return BaseResponse(code=200, message=f"{dto.username} created...")
+
+@router.get("/search", response_model=BaseResponse)
+async def search_user(query: Optional[str] = None, db: Session = Depends(get_db)) :
+    results = db.query(User).filter(User.major.like(f"%{query}%"))
+
+    datas = []
+    for user in results :
+        datas.append(create_user_response(user))
+
+    return BaseResponse(
+        code = 200,
+        message = "유저 검색 성공",
+        data = datas
+    )

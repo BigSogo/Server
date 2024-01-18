@@ -7,34 +7,18 @@ from typing import Optional
 from globals.db import get_db
 from domain.profile.table import Profile
 from globals.base_response import BaseResponse
-from domain.profile.dto import ProfileResponse
-from domain.user.dto import create_user_response
 from domain.user.table import User
 from globals.jwt import get_current_user
 
 router = APIRouter()
 
 # 포트폴리오 가져오기
-@router.get("", response_model=BaseResponse)
-async def get_profile(query: Optional[str] = None, db: Session = Depends(get_db)) :
-    results = db.query(User).filter(User.major.like(f"%{query}%"))
-
-    datas = []
-    for user in results:
-        profile = user.profile
-        if profile:
-            datas.append(ProfileResponse(
-                id=profile.id,
-                user=create_user_response(user),
-                subject=profile.subject,
-                content=profile.content,
-                portfolio_url=profile.portfolio_url
-            ))
-
+@router.get("/{id}", response_model=BaseResponse)
+async def get_profile(id: int, db: Session = Depends(get_db)) :
     return BaseResponse(
         code = 200,
         message = "프로필 검색 성공",
-        data = datas
+        data = db.query(Profile).filter(Profile.id == id).first()
     )
 
 @router.patch("/update-image", response_model=BaseResponse)

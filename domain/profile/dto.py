@@ -1,9 +1,16 @@
 from pydantic import BaseModel
-from domain.user.dto import UserResponse
+from domain.profile.table import Profile
 
 class ProfileResponse(BaseModel):
     id: int
-    user: UserResponse
     subject: str
     content: str
     portfolio_url: str
+
+def create_profile_response(profile: Profile) :
+    return ProfileResponse(
+        id=profile.id,
+        subject=profile.subject,
+        content=profile.content,
+        portfolio_url=profile.portfolio_url
+    )

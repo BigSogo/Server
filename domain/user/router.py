@@ -111,14 +111,18 @@ async def email_authentication(email: EmailAuthentication, redis: Redis = Depend
 # 프로필 사진 업데이트
 @router.patch("/update-image", response_model=BaseResponse)
 async def update_image(file: UploadFile = File(...), db: Session = Depends(get_db), current_user: dict = Depends(get_current_user), bucket: storage.Bucket = Depends(get_bucket)) :
-    user = db.query(User).filter(User.id == id).first()
+    user = db.query(User).filter(User.id == current_user.id).first()
 
     filename = f"{uuid.uuid4()}-{file.filename}"
 
     blob = bucket.blob(filename)
     blob.upload_from_string(await file.read(), content_type=file.content_type)
 
+    blob.make_public()
     user.profile_img = blob.public_url
+
+    db.add(user)
+    db.commit()
 
     return BaseResponse(
         code = 200,

@@ -3,8 +3,10 @@ from fastapi import APIRouter, Depends
 from dotenv import load_dotenv
 from globals.base_response import BaseResponse
 from sqlalchemy.orm import Session
-from fastapi import Depends
+from fastapi import Depends, UploadFile, File, HTTPException
 from typing import Optional
+from google.cloud import storage
+import uuid
 
 # .env 불러오기
 load_dotenv()
@@ -19,6 +21,8 @@ from globals.db import get_db
 from domain.user.dto import Login, Register, create_user_response
 from domain.user.table import User
 from globals.base_response import BaseResponse
+from globals.jwt import get_current_user
+from globals.firebase import get_bucket
 
 # 라우터 설정
 router = APIRouter()
@@ -60,4 +64,22 @@ async def search_user(query: Optional[str] = None, db: Session = Depends(get_db)
         code = 200,
         message = "유저 검색 성공",
         data = datas
+    )
+
+# 프로필 사진 업데이트
+@router.patch("/update-image", response_model=BaseResponse)
+async def update_image(file: UploadFile = File(...), db: Session = Depends(get_db), current_user: dict = Depends(get_current_user), bucket: storage.Bucket = Depends(get_bucket)) :
+    user = db.query(User).filter(User.id == id).first()
+
+    filename = f"{uuid.uuid4()}-{file.filename}"
+
+    blob = bucket.blob(filename)
+    blob.upload_from_string(await file.read(), content_type=file.content_type)
+
+    user.profile_img = blob.public_url
+
+    return BaseResponse(
+        code = 200,
+        message = "이미지 저장 성공",
+        data = user.profile_img
     )

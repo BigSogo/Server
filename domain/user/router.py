@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from dotenv import load_dotenv
 from sqlalchemy.orm import Session
-from fastapi import Depends
+from fastapi import Depends, UploadFile, File, HTTPException
 from typing import Optional
 from smtplib import SMTP
 from email.mime.text import MIMEText
@@ -10,6 +10,8 @@ from email.mime.multipart import MIMEMultipart
 import random
 import os
 from redis import Redis
+from google.cloud import storage
+import uuid
 
 # .env 불러오기
 load_dotenv()
@@ -24,6 +26,8 @@ from globals.db import get_db, get_redis
 from domain.user.dto import Login, Register, EmailAuthentication, EmailSend, create_user_response
 from domain.user.table import User
 from globals.base_response import BaseResponse
+from globals.jwt import get_current_user
+from globals.firebase import get_bucket
 
 # 라우터 설정
 router = APIRouter()
@@ -106,3 +110,25 @@ async def email_authentication(email: EmailAuthentication, redis: Redis = Depend
         return BaseResponse(code=200, message="성공", data=True)
     else:
         return BaseResponse(code=200, message="실패", data=False)
+
+# 프로필 사진 업데이트
+@router.patch("/update-image", response_model=BaseResponse)
+async def update_image(file: UploadFile = File(...), db: Session = Depends(get_db), current_user: dict = Depends(get_current_user), bucket: storage.Bucket = Depends(get_bucket)) :
+    user = db.query(User).filter(User.id == current_user.id).first()
+
+    filename = f"{uuid.uuid4()}-{file.filename}"
+
+    blob = bucket.blob(filename)
+    blob.upload_from_string(await file.read(), content_type=file.content_type)
+
+    blob.make_public()
+    user.profile_img = blob.public_url
+
+    db.add(user)
+    db.commit()
+
+    return BaseResponse(
+        code = 200,
+        message = "이미지 저장 성공",
+        data = user.profile_img
+    )

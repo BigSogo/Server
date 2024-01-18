@@ -5,7 +5,7 @@ from globals.db import Base
 class User(Base):
     __tablename__ = "user"
     id = Column(Integer, primary_key=True, index=True)
-    profile_img = Column(LargeBinary)
+    profile_img = Column(String(100))
     email = Column(String(50))
     username = Column(String(10))
     password = Column(String(100))

@@ -72,14 +72,14 @@ async def search_user(query: Optional[str] = None, db: Session = Depends(get_db)
         data = datas
     )
 
-@router.post("/email/send", response_model=BaseResponse)
+@router.post("/email/send", response_model=BaseResponse[None])
 async def email_send(email: EmailSend, db: Session = Depends(get_db), redis: Redis = Depends(get_redis)):
     user: User = db.query(User).filter(User.email == email.email).one_or_none()
     if user is not None:
         raise HTTPException(400, "이메일 중복")
     
     random_code = ''.join(random.sample(num_list, 6))
-    redis.setex(email.email, 5, random_code)
+    redis.setex(email.email, 300, random_code)
 
     sender_email = os.getenv("EMAIL")
     sender_password = os.getenv("PASSWORD")
@@ -98,6 +98,12 @@ async def email_send(email: EmailSend, db: Session = Depends(get_db), redis: Red
     email_server.quit()
 
     return BaseResponse(code=200, message="이메일 전송 성공")
+
+@router.get("/email/duplicate", response_model=BaseResponse[bool])
+async def email_duplicate(email:str, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == email).one_or_none()
+
+    return BaseResponse(code=200, message="중복 체크 완료", data=True if user is None else False)
 
 @router.post("/email/auth", response_model=BaseResponse[bool])
 async def email_authentication(email: EmailAuthentication, redis: Redis = Depends(get_redis)):

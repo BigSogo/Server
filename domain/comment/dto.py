@@ -7,3 +7,7 @@ class CommentDto(BaseModel):
     content: str
     date: datetime
     writer: UserResponse
+
+class CreateComment(BaseModel):
+    content: str
+    question_id: int

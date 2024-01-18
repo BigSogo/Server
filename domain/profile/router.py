@@ -17,15 +17,19 @@ router = APIRouter()
 # 포트폴리오 가져오기
 @router.get("", response_model=BaseResponse)
 async def get_profile(query: Optional[str] = None, db: Session = Depends(get_db)) :
-    results = db.query(User).filter(Profile.major.like(f"%{query}%"))
+    results = db.query(User).filter(User.major.like(f"%{query}%"))
 
-    datas = [ProfileResponse(
-        id=profile.id,
-        user=create_user_response(profile.user),
-        subject=profile.subject,
-        content=profile.content,
-        portfolio_url=profile.portfolio_url
-    ) for profile in results]
+    datas = []
+    for user in results:
+        profile = user.profile
+        if profile:
+            datas.append(ProfileResponse(
+                id=profile.id,
+                user=create_user_response(user),
+                subject=profile.subject,
+                content=profile.content,
+                portfolio_url=profile.portfolio_url
+            ))
 
     return BaseResponse(
         code = 200,

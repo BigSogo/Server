@@ -10,6 +10,7 @@ class User(Base):
     username = Column(String(10))
     password = Column(String(100))
     description = Column(String(100))
+    major = Column(String(100))
 
     profile = relationship("Profile", back_populates="user", uselist=False)
     questions_writer = relationship("Question", back_populates="writer", foreign_keys="[Question.writer_id]")

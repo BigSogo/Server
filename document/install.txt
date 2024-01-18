@@ -1,1 +1,1 @@
-pip install uvicorn gunicorn sqlalchemy fastapi pydantic "passlib[bcrypt]" PyJWT thefuzz firebase-admin google-cloud-storage dotenv
+pip install uvicorn gunicorn sqlalchemy fastapi pydantic "passlib[bcrypt]" PyJWT thefuzz firebase-admin google-cloud-storage dotenv redis pymsql python-multipart uvloop httptools

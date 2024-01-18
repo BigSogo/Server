@@ -1,5 +1,5 @@
 # 기본 모듈
-from FastAPI import APIRouter, Depends
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from typing import Optional
 
@@ -7,6 +7,9 @@ from typing import Optional
 from globals.db import get_db
 from domain.profile.table import Profile
 from globals.base_response import BaseResponse
+from domain.profile.dto import ProfileResponse
+from domain.user.table import User
+from domain.user.dto import UserResponse
 
 router = APIRouter()
 
@@ -15,9 +18,25 @@ router = APIRouter()
 async def get_profile(query: Optional[str] = None, db: Session = Depends(get_db)) :
     results = db.query(Profile).filter(Profile.major.like(f"%{query}%"))
 
+    datas = [ProfileResponse(
+        id=profile.id,
+        user=__create_user_response(profile.user),
+        subject=profile.subject,
+        content=profile.content,
+        portfolio_url=profile.portfolio_url
+    ) for profile in results]
+
     return BaseResponse(
         code = 200,
         message = "프로필 검색 성공",
-        data = results
+        data = datas
     )
-    
+
+def __create_user_response(user: User):
+    return UserResponse(
+        id=user.id,
+        email=user.email,
+        username=user.username,
+        description=user.description,
+        major=user.major.split("|")
+    )

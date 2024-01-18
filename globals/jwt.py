@@ -21,7 +21,6 @@ from globals.db import get_db
 from domain.user.dto import Login
 from domain.user.table import User
 from sqlalchemy.orm import Session
-from globals.base_response import BaseResponse
 
 # JWT 발급
 def generate_token(dto: Login, db: Session) :

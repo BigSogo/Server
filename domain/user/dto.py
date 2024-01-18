@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Optional
 
 class Register(BaseModel) :
     email : str
@@ -13,3 +14,5 @@ class UserResponse(BaseModel) :
     id : int
     email: str
     username : str
+    description: Optional[str] = None
+    major: list[str]

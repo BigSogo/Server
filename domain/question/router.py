@@ -41,7 +41,7 @@ async def get_question(id:int, db: Session = Depends(get_db)):
     
     writer = create_user_response(question.writer)
 
-    senior = None if question.senior == None else __create_user_response(question.senior)
+    senior = None if question.senior == None else create_user_response(question.senior)
 
     comments = [CommentDto(
         id=comment.id,
@@ -69,8 +69,8 @@ async def get_question_list(db: Session = Depends(get_db)):
         id=question.id,
         title=question.title,
         date=question.date,
-        writer=__create_user_response(question.writer),
-        senior=None if question.senior == None else __create_user_response(question.senior)
+        writer=create_user_response(question.writer),
+        senior=None if question.senior == None else create_user_response(question.senior)
     ) for question in questions]
 
     return BaseResponse(code=200, message="조회 완료", data=question_list)
@@ -83,8 +83,8 @@ async def get_my_question(db: Session = Depends(get_db), user_data: User = Depen
         id=question.id,
         title=question.title,
         date=question.date,
-        writer=__create_user_response(question.writer),
-        senior=None if question.senior == None else __create_user_response(question.senior)
+        writer=create_user_response(question.writer),
+        senior=None if question.senior == None else create_user_response(question.senior)
     ) for question in questions]
 
     return BaseResponse(code=200, message="조회 성공", data=question_list)
@@ -99,8 +99,8 @@ async def search_question(keyword: str, db: Session = Depends(get_db)):
         id=question.id,
         title=question.title,
         date=question.date,
-        writer=__create_user_response(question.writer),
-        senior=None if question.senior == None else __create_user_response(question.senior)
+        writer=create_user_response(question.writer),
+        senior=None if question.senior == None else create_user_response(question.senior)
     ) for question in filtered_questions]
 
     return BaseResponse(code=200, message="조회 성공", data=question_list)

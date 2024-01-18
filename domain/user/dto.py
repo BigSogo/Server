@@ -7,6 +7,7 @@ class Register(BaseModel) :
     email : str
     username : str
     password : str
+    major : list[str]
 
 class Login(BaseModel) :
     email : str

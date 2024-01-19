@@ -12,6 +12,10 @@ import os
 from redis import Redis
 from google.cloud import storage
 import uuid
+from markdown_it import MarkdownIt
+
+# 마크다운 설정
+md = MarkdownIt()
 
 # .env 불러오기
 load_dotenv()
@@ -88,11 +92,23 @@ async def email_send(email: EmailSend, db: Session = Depends(get_db), redis: Red
     email_server.starttls()
     email_server.login(sender_email, sender_password)
 
+    markdown_message = f"""
+    # **SOGO**에 오신 것을 환영합니다 !
+
+    **인증코드는 아래와 같습니다**
+
+    - {random_code}
+
+    **감사합니다!**
+    """
+
+    html_message = md.render(markdown_message)
+
     msg = MIMEMultipart()
     msg["FROM"] = sender_email
     msg["To"] = email.email
     msg["Subject"] = "sogo 이메일 인증"
-    msg.attach(MIMEText(random_code))
+    msg.attach(MIMEText(html_message, "html"))
 
     email_server.send_message(msg)
     email_server.quit()

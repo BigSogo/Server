@@ -11,6 +11,7 @@ from domain.user import router as user
 from domain.question import router as question
 from domain.profile import router as profile
 from domain.comment import router as comment
+from domain.event import router as event
 
 logging.basicConfig()
 
@@ -23,6 +24,7 @@ app.include_router(profile.router, prefix="/profile", tags=["profile"])
 app.include_router(question.router, prefix="/question", tags=["question"])
 app.include_router(user.router, prefix="/user", tags=["user"])
 app.include_router(comment.router, prefix="/comment", tags=["comment"])
+app.include_router(event.router, prefix="/event", tags=["event"])
 
 # CORS 설정
 origins = ["*"]

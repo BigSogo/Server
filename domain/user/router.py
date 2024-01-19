@@ -43,8 +43,10 @@ async def login(dto: Login, db: Session = Depends(get_db)) :
     return BaseResponse(code=200, message="발급 완료", data = jwtUtil.generate_token(dto, db))
 
 # 테스트 라우터
-@router.get("/test")
-async def test(current_user: dict = Depends(jwtUtil.get_current_user)) :
+@router.get("")
+async def myinfo(current_user: User = Depends(jwtUtil.get_current_user)) :
+    if current_user is None:
+        HTTPException(403, "권한이 없습니다")
     return current_user
 
 # 회원가입

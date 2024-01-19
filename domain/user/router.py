@@ -27,7 +27,7 @@ bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated="auto")
 # 관련 모듈
 import globals.jwt as jwtUtil
 from globals.db import get_db, get_redis
-from domain.user.dto import Login, Register, EmailAuthentication, EmailSend, create_user_response
+from domain.user.dto import Login, Register, EmailAuthentication, EmailSend, create_user_response, UserResponse
 from domain.user.table import User
 from globals.base_response import BaseResponse
 from globals.jwt import get_current_user
@@ -43,11 +43,11 @@ async def login(dto: Login, db: Session = Depends(get_db)) :
     return BaseResponse(code=200, message="발급 완료", data = jwtUtil.generate_token(dto, db))
 
 # 테스트 라우터
-@router.get("")
+@router.get("", response_model=BaseResponse[UserResponse])
 async def myinfo(current_user: User = Depends(jwtUtil.get_current_user)) :
     if current_user is None:
         HTTPException(403, "권한이 없습니다")
-    return current_user
+    return create_user_response(current_user)
 
 # 회원가입
 @router.post("", response_model=BaseResponse[None])

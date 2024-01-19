@@ -2,6 +2,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from dotenv import load_dotenv
 from sqlalchemy.orm import Session
+from sqlalchemy.sql.expression import func
 from fastapi import Depends, UploadFile, File, HTTPException
 from typing import Optional
 from smtplib import SMTP
@@ -44,6 +45,14 @@ async def myinfo(current_user: User = Depends(jwtUtil.get_current_user)) :
     if current_user is None:
         HTTPException(403, "권한이 없습니다")
     return BaseResponse(code=200, message="조회 성공", data=create_user_response(current_user))
+
+@router.get("/random", response_model=(BaseResponse[list[UserResponse]]))
+async def random_recommend(db: Session = Depends(get_db)):
+    users = db.query(User).order_by(func.rand()).limit(3).all()
+
+    random_users = [create_user_response(user) for user in users]
+
+    return BaseResponse(code=200, message="조회 수업", data=random_users)
 
 # 회원가입
 @router.post("", response_model=BaseResponse[None])

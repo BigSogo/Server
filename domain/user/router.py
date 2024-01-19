@@ -12,7 +12,6 @@ import os
 from redis import Redis
 from google.cloud import storage
 import uuid
-import markdown2
 
 # .env 불러오기
 load_dotenv()

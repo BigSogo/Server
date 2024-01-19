@@ -47,7 +47,7 @@ async def login(dto: Login, db: Session = Depends(get_db)) :
 async def myinfo(current_user: User = Depends(jwtUtil.get_current_user)) :
     if current_user is None:
         HTTPException(403, "권한이 없습니다")
-    return create_user_response(current_user)
+    return BaseResponse(code=200, message="조회 성공", data=create_user_response(current_user))
 
 # 회원가입
 @router.post("", response_model=BaseResponse[None])

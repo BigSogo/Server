@@ -44,7 +44,7 @@ def generate_token(dto: Login, db: Session) :
 def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security), db: Session = Depends(get_db)):
     if credentials:
         token = credentials.credentials
-        info = verify_token(token[7:])
+        info = verify_token(token)
         return db.query(User).get(info['id'])
     else:
         HTTPException(403, "권한없음")

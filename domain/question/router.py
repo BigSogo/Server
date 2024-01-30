@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from http import HTTPStatus
 from sqlalchemy.orm import Session
+from thefuzz import process
 
 from domain.question.table import Question
 from domain.user.table import User
@@ -11,8 +12,6 @@ from domain.user.dto import create_user_response
 from globals.base_response import BaseResponse
 from globals.db import get_db
 from globals.jwt import get_current_user
-
-from thefuzz import process
 
 router = APIRouter()
 
@@ -46,7 +45,8 @@ async def get_question(id:int, db: Session = Depends(get_db)):
     comments = [CommentDto(
         id=comment.id,
         content=comment.content,
-        date=comment.date
+        date=comment.date,
+        writer=writer
     ) for comment in question.comments]
 
     response = GetQuestion(
@@ -80,7 +80,7 @@ async def get_question_list(db: Session = Depends(get_db)):
 async def get_my_question(db: Session = Depends(get_db), user_data: User = Depends(get_current_user)):
     questions = db.query(Question).filter(Question.writer_id == user_data.id).all()
 
-    question_list = [GetQuestionList(
+    question_list = [GetQuestionList( 
         id=question.id,
         title=question.title,
         content=question.content,

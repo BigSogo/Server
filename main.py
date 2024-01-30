@@ -40,7 +40,7 @@ if __name__ == "__main__":
     uvicorn_kwargs = {
         "host": "0.0.0.0",
         "port": 8080,
-        "workers": 10,
+        "workers": 5,
         "loop": "uvloop",
         "http": "httptools",
         "forwarded_allow_ips": "*"

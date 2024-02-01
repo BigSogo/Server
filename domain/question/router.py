@@ -46,7 +46,7 @@ async def get_question(id:int, db: Session = Depends(get_db)):
         id=comment.id,
         content=comment.content,
         date=comment.date,
-        writer=writer
+        writer=comment.writer
     ) for comment in question.comments]
 
     response = GetQuestion(

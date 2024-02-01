@@ -113,7 +113,7 @@ async def update_question(question_id: int, request: CreateQuestion, db: Session
     question = db.query(Question).get(question_id)
     if question is None:
         raise HTTPException(404, "데이터를 찾을 수 없습니다.")
-    if question.writer_id == user_data.id:
+    if question.writer_id != user_data.id:
         raise HTTPException(403, "권한이 없습니다")
 
     question.title = request.title

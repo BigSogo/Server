@@ -12,7 +12,7 @@ class User(Base):
     description = Column(String(100))
     major = Column(String(100))
 
-    profile = relationship("Profile", back_populates="user", uselist=False)
+    profile = relationship("Profile", back_populates="user")
     questions_writer = relationship("Question", back_populates="writer", foreign_keys="[Question.writer_id]")
     questions_senior = relationship("Question", back_populates="senior", foreign_keys="[Question.senior_id]")
     comments = relationship("Comment", back_populates="writer")

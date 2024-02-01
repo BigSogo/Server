@@ -19,7 +19,7 @@ async def get_profile(user_id: int, db: Session = Depends(get_db)) :
 
     profile_list = ProfileListResponse(
         user=create_user_response(user),
-        profiles=create_profile_response(user.profile)
+        profiles=[create_profile_response(profile) for profile in user.profile]
     )
 
     return BaseResponse(

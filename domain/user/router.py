@@ -71,7 +71,7 @@ async def register(dto: Register, db: Session = Depends(get_db)):
 
 @router.get("/search", response_model=BaseResponse)
 async def search_user(query: Optional[str] = None, db: Session = Depends(get_db)) :
-    results = db.query(User).filter(User.major.like(f"%{query}%"))
+    results = db.query(User).filter(User.username.like(f"%{query}%"))
 
     datas = []
     for user in results :
